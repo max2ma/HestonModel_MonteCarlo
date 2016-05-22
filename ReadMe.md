@@ -12,7 +12,7 @@ The [Heston model][Heston Model], which was first published by Steven Heston in 
 Entering more specifically into the financial sector operations, two styles of stock transaction [options][option] are considered in this project, namely the European vanilla option and European barrier option (which is one of the [exotic options][exotic options]).
 [Call options][Call options] and [put options][put options] are defined reciprocally. Given the basic parameters for an option, namely expiration date and strike price, the call/put payoff price could be estimated.
 [option]: https://en.wikipedia.org/wiki/Option_style
-[exotic option]: https://en.wikipedia.org/wiki/Exotic_option
+[exotic options]: https://en.wikipedia.org/wiki/Exotic_option
 
 ### The Monte Carlo Method
 The [Monte Carlo Method][Monte Carlo] is one of the most widely used approaches to simulate stochastic processes, like the stock price and volatility modeled with Heston. This is especially true for exotic options, which are usually not solvable analytically. In this project, the Monte Carlo Method is used to estimate the payoff price of a given instrument using the Heston model.
