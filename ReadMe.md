@@ -146,7 +146,7 @@ The time taken by the algorithm is ![$$T=\alpha M \cdot N+\beta N+\gamma M+\thet
 
 We can see that ![$\alpha$] is related to the latency of the inner loop. Since each iteration of the inner loop requires random numbers, one of factors that limit the latency is the latency of generating a random number. The other factor are the mathematical operations of one step.
 
-At frequencies below 100MHz on modern FPGAs, two random numbers are produced every two clock cycles (pipeline with Initiation Interval 2). By considering also the unrolling factor NUM_RNGS, the time for each step on the FPGA could be estimated.
+At frequencies below 100MHz on modern FPGAs, two random numbers are produced every two clock cycles (pipeline with Initiation Interval equals two). By considering also the unrolling factor NUM_RNGS, the time for each step on the FPGA could be estimated.
 
 ### Performance Comparison
 - Intel HD Graphics 4400 laptop GPU, with 80 cores, 1100MHz
@@ -154,12 +154,12 @@ At frequencies below 100MHz on modern FPGAs, two random numbers are produced eve
 - Quadro K4200 with 1344 cores, 784MHz
 - Virtex 7 xc7vx690tffg1157-2, using the sin/cos functions
 
-platform         |     t(ns)    | power(W)| energy/step(nJ)| notes
-:--------------- | ------------:| -------:| --------: |-------------
-HD 4400          |         |  15     |       |
-GTX 960          |     0.604    |  120    |  72.4     |
-Quadro K4200     |     0.663    |  105    |  69.7     |
-Virtex 7 sin/cos |         |         |       |
+platform         |     t(ns)    | power(W)| energy/step(nJ)
+:--------------- | ------------:| -------:| --------:
+HD 4400          |     6.918    |  15     |  103.8    
+GTX 960          |     0.604    |  120    |  72.4     
+Quadro K4200     |     0.663    |  105    |  69.7     
+Virtex 7 sin/cos |     1.424    |  11.956 |  17.025     
 
 [Heston Model]: https://en.wikipedia.org/wiki/Heston_model
 [geometric Brownian motion]: https://en.wikipedia.org/wiki/Geometric_Brownian_motion
@@ -168,7 +168,6 @@ Virtex 7 sin/cos |         |         |       |
 [Mersenne Twister]: https://en.wikipedia.org/wiki/Mersenne_Twister
 [Monte Carlo]: https://en.wikipedia.org/wiki/Monte_Carlo_method  
 [Box Muller transformation]: https://en.wikipedia.org/wiki/Box%E2%80%93Muller_transform
-
 
 [$\alpha$]:/figures/alpha.PNG
 [$N=NUM\_SIMS \cdot NUM\_RNG \cdot NUM\_SIMGROUPS$]:figures/N.PNG
