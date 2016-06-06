@@ -72,12 +72,14 @@ hestonModel
 │   │   solution.tcl
 │   │   main.cpp
 │   │   hestonEuro.cpp
+│   │   heston.h
 │   └─  heston.cpp
 │
 └── hestonBarrier
     │   solution.tcl
     │   main.cpp
     │   hestonBarrier.cpp
+    │   heston.h
     └─  heston.cpp
 ```
 
