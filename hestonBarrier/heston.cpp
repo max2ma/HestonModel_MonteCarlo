@@ -15,7 +15,24 @@ heston::heston(stockData data,volData vol,barrierData bData)
 	:data(data),vol(vol),bData(bData)
 {
 }
+void heston::simulation(data_t* pCall, data_t *pPut)
+{
 
+	RNG mt_rng[NUM_RNGS];
+#pragma HLS ARRAY_PARTITION variable=mt_rng complete dim=1
+
+	uint seeds[NUM_RNGS];
+#pragma HLS ARRAY_PARTITION variable=seeds complete dim=1
+
+	loop_seed:for(int i=0;i<NUM_RNGS;i++)
+	{
+#pragma HLS UNROLL
+		seeds[i]=i;
+	}
+	RNG::init_array(mt_rng,seeds,NUM_RNGS);
+	return sampleSIM(mt_rng,pCall,pPut);
+
+}
 void heston::sampleSIM(RNG* mt_rng, data_t* call,data_t* put)
 {
 	const data_t Dt=data.timeT/NUM_STEPS,
@@ -115,21 +132,4 @@ void heston::sampleSIM(RNG* mt_rng, data_t* call,data_t* put)
 	*put= ratio1*fPut/NUM_RNGS/NUM_SIMS/NUM_SIMGROUPS;
 }
 
-void heston::simulation(data_t* pCall, data_t *pPut)
-{
 
-	RNG mt_rng[NUM_RNGS];
-#pragma HLS ARRAY_PARTITION variable=mt_rng complete dim=1
-
-	uint seeds[NUM_RNGS];
-#pragma HLS ARRAY_PARTITION variable=seeds complete dim=1
-
-	loop_seed:for(int i=0;i<NUM_RNGS;i++)
-	{
-#pragma HLS UNROLL
-		seeds[i]=i;
-	}
-	RNG::init_array(mt_rng,seeds,NUM_RNGS);
-	return sampleSIM(mt_rng,pCall,pPut);
-
-}
