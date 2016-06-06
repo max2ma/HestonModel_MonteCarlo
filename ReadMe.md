@@ -78,7 +78,9 @@ hestonModel
 └── hestonBarrier
     │   solution.tcl
     │   main.cpp
-    │   hestonBarrier.cpp
+    │   hestonEuroBarrier.cpp
+    │   barrierData.h
+    │   barrierData.cpp
     │   heston.h
     └─  heston.cpp
 ```
