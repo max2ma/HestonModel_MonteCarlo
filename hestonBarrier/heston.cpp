@@ -5,21 +5,20 @@
 *----------------------------------------------------------------------------
 */
 #include "heston.h"
-#define 	MAX_NUM_RNG 	2
-#define 	MAX_SAMPLE      2
-#define 	NUM_SHARE	64
-#define 	PAR		64
 
+const int heston::NUM_RNGS=2;
+const int heston::NUM_SIMS=512;
+const int heston::NUM_SIMGROUPS=32;
+const int heston::NUM_STEPS=128;
 
 heston::heston(stockData data,volData vol,barrierData bData)
 	:data(data),vol(vol),bData(bData)
 {
-	//vol.print();
 }
 
 void heston::sampleSIM(RNG* mt_rng, data_t* call,data_t* put)
 {
-	const data_t Dt=data.timeT/PAR,
+	const data_t Dt=data.timeT/NUM_STEPS,
 			ratio1=expf(-data.freeRate*data.timeT)*data.strikePrice,
 			ratio2=sqrtf(fmaxf(1-vol.correlation*vol.correlation,0)),
 			ratio3=Dt*data.freeRate,
@@ -29,28 +28,28 @@ void heston::sampleSIM(RNG* mt_rng, data_t* call,data_t* put)
 			lowB=bData.lowBarrier;
 
 	data_t fCall=0,fPut=0;
-	data_t sCall[MAX_NUM_RNG],sPut[MAX_NUM_RNG];
+	data_t sCall[NUM_RNGS],sPut[NUM_RNGS];
 #pragma HLS ARRAY_PARTITION variable=sCall complete dim=1
 #pragma HLS ARRAY_PARTITION variable=sPut complete dim=1
 
-	data_t stockPrice[MAX_NUM_RNG][NUM_SHARE];
+	data_t stockPrice[NUM_RNGS][NUM_SIMGROUPS];
 #pragma HLS ARRAY_PARTITION variable=stockPrice complete dim=1
 
-	data_t vols[MAX_NUM_RNG][NUM_SHARE],pVols[MAX_NUM_RNG][NUM_SHARE];
+	data_t vols[NUM_RNGS][NUM_SIMGROUPS],pVols[NUM_RNGS][NUM_SIMGROUPS];
 
 #pragma HLS ARRAY_PARTITION variable=vols complete dim=1
 #pragma HLS ARRAY_PARTITION variable=pVols complete dim=1
 
-	data_t num1[MAX_NUM_RNG][NUM_SHARE],num2[MAX_NUM_RNG][NUM_SHARE];
+	data_t num1[NUM_RNGS][NUM_SIMGROUPS],num2[NUM_RNGS][NUM_SIMGROUPS];
 #pragma HLS ARRAY_PARTITION variable=num2 complete dim=1
 #pragma HLS ARRAY_PARTITION variable=num1 complete dim=1
 
-	data_t bBarrier[MAX_NUM_RNG][NUM_SHARE];
+	data_t bBarrier[NUM_RNGS][NUM_SIMGROUPS];
 #pragma HLS ARRAY_PARTITION variable=bBarrier complete dim=1
 
-	loop_init:for(int s=0;s<NUM_SHARE;s++)
+	loop_init:for(int s=0;s<NUM_SIMGROUPS;s++)
 	{
-		for(int i =0;i<MAX_NUM_RNG;i++)
+		for(int i =0;i<NUM_RNGS;i++)
 		{
 	#pragma HLS UNROLL
 			stockPrice[i][s]=data.initPrice;
@@ -59,14 +58,14 @@ void heston::sampleSIM(RNG* mt_rng, data_t* call,data_t* put)
 			bBarrier[i][s]=true;
 		}
 	}
-	loop_main:for(int j=0;j<MAX_SAMPLE;j++)
+	loop_main:for(int j=0;j<NUM_SIMS;j++)
 	{
-		loop_path:for(int path=0;path<PAR;path++)
+		loop_path:for(int path=0;path<NUM_STEPS;path++)
 		{
-			loop_share:for(int s=0;s<NUM_SHARE;s++)
+			loop_share:for(int s=0;s<NUM_SIMGROUPS;s++)
 			{
 		#pragma HLS PIPELINE
-				loop_parallel:for(uint i=0;i<MAX_NUM_RNG;i++)
+				loop_parallel:for(uint i=0;i<NUM_RNGS;i++)
 				{
 #pragma HLS UNROLL
 					if(!bBarrier[i][s])
@@ -83,9 +82,9 @@ void heston::sampleSIM(RNG* mt_rng, data_t* call,data_t* put)
 				}
 			}
 		}
-		loop_sum:for(int s=0;s<NUM_SHARE;s++)
+		loop_sum:for(int s=0;s<NUM_SIMGROUPS;s++)
 		{
-			loop_sum_R:for(int i =0;i<MAX_NUM_RNG;i++)
+			loop_sum_R:for(int i =0;i<NUM_RNGS;i++)
 			{
 #pragma HLS UNROLL
 				vols[i][s]=vol.initValue;
@@ -106,31 +105,31 @@ void heston::sampleSIM(RNG* mt_rng, data_t* call,data_t* put)
 			}
 		}
 	}
-	loop_final_sum:for(int i =0;i<MAX_NUM_RNG;i++)
+	loop_final_sum:for(int i =0;i<NUM_RNGS;i++)
 	{
 #pragma HLS UNROLL
 		fCall+=sCall[i];
 		fPut+=sPut[i];
 	}
-	*call= fCall/MAX_NUM_RNG/MAX_SAMPLE/NUM_SHARE;
-	*put= fPut/MAX_NUM_RNG/MAX_SAMPLE/NUM_SHARE;
+	*call= ratio1*fCall/NUM_RNGS/NUM_SIMS/NUM_SIMGROUPS;
+	*put= ratio1*fPut/NUM_RNGS/NUM_SIMS/NUM_SIMGROUPS;
 }
 
 void heston::simulation(data_t* pCall, data_t *pPut)
 {
 
-	RNG mt_rng[MAX_NUM_RNG];
+	RNG mt_rng[NUM_RNGS];
 #pragma HLS ARRAY_PARTITION variable=mt_rng complete dim=1
 
-	uint seeds[MAX_NUM_RNG];
+	uint seeds[NUM_RNGS];
 #pragma HLS ARRAY_PARTITION variable=seeds complete dim=1
 
-	loop_seed:for(int i=0;i<MAX_NUM_RNG;i++)
+	loop_seed:for(int i=0;i<NUM_RNGS;i++)
 	{
 #pragma HLS UNROLL
 		seeds[i]=i;
 	}
-	RNG::init_array(mt_rng,seeds,MAX_NUM_RNG);
+	RNG::init_array(mt_rng,seeds,NUM_RNGS);
 	return sampleSIM(mt_rng,pCall,pPut);
 
 }
