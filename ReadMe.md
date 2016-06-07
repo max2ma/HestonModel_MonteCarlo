@@ -68,6 +68,8 @@ hestonModel
 │   │   RNG.cpp
 │   │   stockData.h
 │   │   stockData.cpp
+│   │   barrierData.h
+│   │   barrierData.cpp
 │   │   volatilityData.h
 │   │   volatilityData.cpp
 │   └─  ML_cl.h
@@ -82,11 +84,8 @@ hestonModel
 └── hestonBarrier
     │   solution.tcl
     │   main.cpp
-    │   hestonEuroBarrier.cpp
-    │   barrierData.h
-    │   barrierData.cpp
-    │   heston.h
-    └─  heston.cpp
+    │   hestonBarrier.h
+    └─  hestonBarrier.cpp
 ```
 
 File/Dir name  |Information
