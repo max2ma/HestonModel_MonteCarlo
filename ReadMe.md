@@ -104,7 +104,8 @@ The values of the parameters for a given stock and option are listed in the name
 The values of these parameters, except for the name of the kernel, have a default value and can be changed via the corresponding command-line option at runtime. The kernel name must be "hestonBarrier" for the European barrier option and hestonEuro for the European one.
 The call price and the put price are used for functional verification only (they are the expected output values for a given set of input values)
 
-For example, the RTL emulation can be executed as follows to use the Asian option with the default parameter values:
+For example, the RTL emulation can be executed as follows to use the European
+barrier option with the default parameter values:
 > run_emulation -flow hardware -args "-n hestonBarrier"
 
 
@@ -124,8 +125,6 @@ In each sub-directory, there is a script file called "solution.tcl". It can be u
 >  sdaccel solution.tcl
 
 The result of the call/put payoff price estimation will be printed on standard IO.
-
-Note that RTL simulation can take a very long time for the Asian option. In order to obtain (imprecise) results quickly, the computation cost C can be reduced. For instance, NUM_SIMGROUPS has been set to 2 for the Asian option.
 
 ## Performance Metrics
 
@@ -148,9 +147,8 @@ The time taken by the algorithm is ![$$T=\alpha M \cdot N+\beta N+\gamma M+\thet
 >
 - Estimate the average
 
-We can see that ![$\alpha$] is related to the latency of the inner loop. Since each iteration of the inner loop requires random numbers, one of factors that limit the latency is the latency of generating a random number. The other factor are the mathematical operations of one step.
-
-At frequencies below 100MHz on modern FPGAs, two random numbers are produced every two clock cycles (pipeline with Initiation Interval equals two). By considering also the unrolling factor NUM_RNGS, the time for each step on the FPGA could be estimated.
+We can see that ![$\alpha$] is related to the latency of the inner loop. One of
+the main factors that limit it is the latency of generating a random number. 
 
 ### Performance Comparison
 - Intel HD Graphics 4400 laptop GPU, with 80 cores, 1100MHz
@@ -160,10 +158,10 @@ At frequencies below 100MHz on modern FPGAs, two random numbers are produced eve
 
 platform         |     t(ns)    | power(W)| energy/step(nJ)
 :--------------- | ------------:| -------:| --------:
-HD 4400          |     6.918    |  15     |  103.8    
-GTX 960          |     0.604    |  120    |  72.4     
-Quadro K4200     |     0.663    |  105    |  69.7     
-Virtex 7 sin/cos |     1.424    |  11.956 |  17.025     
+HD 4400          |     6.918    |  15     |  104    
+GTX 960          |     0.604    |  120    |  72     
+Quadro K4200     |     0.663    |  105    |  70     
+Virtex 7 sin/cos |     1.424    |  12     |  17     
 
 [Heston Model]: https://en.wikipedia.org/wiki/Heston_model
 [geometric Brownian motion]: https://en.wikipedia.org/wiki/Geometric_Brownian_motion
