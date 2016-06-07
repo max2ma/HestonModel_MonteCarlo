@@ -7,7 +7,6 @@
 #include "heston.h"
 
 const int heston::NUM_RNGS=2;
-const int heston::NUM_SIMS=512;
 const int heston::NUM_SIMGROUPS=32;
 const int heston::NUM_STEPS=128;
 
@@ -16,7 +15,7 @@ heston::heston(stockData data,volData vol):data(data),vol(vol)
 }
 
 
-void heston::simulation(data_t* pCall, data_t *pPut)
+void heston::simulation(data_t* pCall, data_t *pPut, int num_sims)
 {
 
 	RNG mt_rng[NUM_RNGS];
@@ -31,11 +30,11 @@ void heston::simulation(data_t* pCall, data_t *pPut)
 		seeds[i]=i;
 	}
 	RNG::init_array(mt_rng,seeds,NUM_RNGS);
-	return sampleSIM(mt_rng,pCall,pPut);
+	return sampleSIM(mt_rng,pCall,pPut,num_sims);
 
 }
 
-void heston::sampleSIM(RNG* mt_rng, data_t* call,data_t* put)
+void heston::sampleSIM(RNG* mt_rng, data_t* call,data_t* put, int num_sims)
 {
 	const data_t Dt=data.timeT/NUM_STEPS,
 			ratio1=expf(-data.freeRate*data.timeT)*data.strikePrice,
@@ -72,7 +71,7 @@ void heston::sampleSIM(RNG* mt_rng, data_t* call,data_t* put)
 			pVols[i][s]=volInit;
 		}
 	}
-	loop_main:for(int j=0;j<NUM_SIMS;j++)
+	loop_main:for(int j=0;j<num_sims;j++)
 	{
 		loop_path:for(int path=0;path<NUM_STEPS;path++)
 		{
@@ -119,7 +118,7 @@ void heston::sampleSIM(RNG* mt_rng, data_t* call,data_t* put)
 		fCall+=sCall[i];
 		fPut+=sPut[i];
 	}
-	*call= ratio1*fCall/NUM_RNGS/NUM_SIMS/NUM_SIMGROUPS;
-	*put= ratio1*fPut/NUM_RNGS/NUM_SIMS/NUM_SIMGROUPS;
+	*call= ratio1*fCall/NUM_RNGS/num_sims/NUM_SIMGROUPS;
+	*put= ratio1*fPut/NUM_RNGS/num_sims/NUM_SIMGROUPS;
 }
 

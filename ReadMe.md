@@ -65,7 +65,6 @@ hestonModel
 │   │   RNG.cpp
 │   │   stockData.h
 │   │   stockData.cpp
-│   │   heston.h
 │   └─  ML_cl.h
 │
 └── hestonEuro
@@ -105,9 +104,17 @@ The values of these parameters, except for the name of the kernel, have a defaul
 The call price and the put price are used for functional verification only (they are the expected output values for a given set of input values)
 
 For example, the RTL emulation can be executed as follows to use the European
-barrier option with the default parameter values:
-> run_emulation -flow hardware -args "-n hestonBarrier"
+vanilla option with the default parameter values:
+> run_emulation -flow hardware -args "-n hestonEuro -p 5.89 -c 8.71 -s 2"
 
+
+Argument |  Meaning and default value
+:-------- | :---
+-n 	 | the kernel name, to be passed to the OpenCL runtime (no default; must be hestonBarrier or hestonEuro)
+-a 	 | the OpenCl binary file name, to be passed to the OpenCL runtime (heston.xclbin)
+-s       | number of simulation runs N (2)
+-c       | expected call price (for verification)
+-p       | expected put price (for verification)
 
 The number of simulations N, and the number of time partitions M, as well as all the other parameters related to the simulation, are listed in ***"heston.cpp"***. They are compile-time constants in order to generate an optimized implementation. However, NUM_SIMGROUPS could also be set via a run-time command line option, like those above.
 
@@ -125,6 +132,10 @@ In each sub-directory, there is a script file called "solution.tcl". It can be u
 >  sdaccel solution.tcl
 
 The result of the call/put payoff price estimation will be printed on standard IO.
+
+Please note that RTL simulation can take a very long time for the Heston model.
+In order to obtain (imprecise) results quickly, the computation cost C can be
+reduced. For instance, NUM_SIMGROUPS has been set to 2 in the TCL script.
 
 ## Performance Metrics
 
@@ -154,7 +165,7 @@ the main factors that limit it is the latency of generating a random number.
 - Intel HD Graphics 4400 laptop GPU, with 80 cores, 1100MHz
 - GeForce GTX 960 with 1024 cores, 1178MHz
 - Quadro K4200 with 1344 cores, 784MHz
-- Virtex 7 xc7vx690tffg1157-2, using the sin/cos functions
+- Virtex 7 xc7vx690tffg1157-2, using the sin/cos functions, 160MHz
 
 platform         |     t(ns)    | power(W)| energy/step(nJ)
 :--------------- | ------------:| -------:| --------:

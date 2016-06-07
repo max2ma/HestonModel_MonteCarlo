@@ -80,14 +80,16 @@ void usage(char* name)
         <<" -n kernel_name"
         <<" [-c call_price]"
         <<" [-p put_price]"
+        <<" [-s num_sims]"
         <<endl;
 }
 int main(int argc, char** argv)
 {
 	int opt;
 	double callR=-1, putR=-1;
+	int num_sims=512;
 	bool flaga=false,flagc=false,flagp=false,flagn=false;
-	while((opt=getopt(argc,argv,"n:a:c:p:"))!=-1){
+	while((opt=getopt(argc,argv,"n:a:c:p:s:"))!=-1){
 		switch(opt){
 			case 'n':
 				Params::kernel_name=optarg;
@@ -104,6 +106,9 @@ int main(int argc, char** argv)
 			case 'p':
 				putR=atof(optarg);
 				flagp=true;
+				break;
+			case 's':
+				num_sims=atof(optarg);
 				break;
 			default:
 				usage(argv[0]);
@@ -148,7 +153,8 @@ int main(int argc, char** argv)
 
 		cl::CommandQueue commandQueue(context, devices[0]);
 		
-		typedef cl::make_kernel<cl::Buffer,cl::Buffer,float,float,float,float,float,float,float,float,float> kernelType;
+		typedef
+		cl::make_kernel<cl::Buffer,cl::Buffer,float,float,float,float,float,float,float,float,float,int> kernelType;
 		kernelType kernelFunctor = kernelType(program, Params::kernel_name);
 
 		cl::Buffer d_call = cl::Buffer(context, CL_MEM_WRITE_ONLY, sizeof(float));
@@ -165,8 +171,8 @@ int main(int argc, char** argv)
 				 		Params::rate,
 						Params::volatility,
 						Params::S0,
-						Params::K
-						);
+						Params::K,
+						num_sims);
 
 		commandQueue.finish();
 		event.wait();

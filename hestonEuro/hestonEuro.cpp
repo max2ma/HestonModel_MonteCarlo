@@ -15,7 +15,8 @@ void hestonEuro(data_t *pCall, data_t *pPut,   // call price and put price
 		data_t freeRate,			// interest rate of the riskless asset
 		data_t volatility,			// volatility of the risky asset
 		data_t initPrice,			// stock price at time 0
-		data_t strikePrice)			// strike price
+		data_t strikePrice,			// strike price
+		int num_sims)
 {
 #pragma HLS INTERFACE m_axi port=pCall bundle=gmem
 #pragma HLS INTERFACE s_axilite port=pCall bundle=control
@@ -39,13 +40,14 @@ void hestonEuro(data_t *pCall, data_t *pPut,   // call price and put price
 #pragma HLS INTERFACE s_axilite port=initPrice bundle=control
 #pragma HLS INTERFACE s_axilite port=strikePrice bundle=gmem
 #pragma HLS INTERFACE s_axilite port=strikePrice bundle=control
+#pragma HLS INTERFACE s_axilite port=num_sims bundle=control
 #pragma HLS INTERFACE s_axilite port=return bundle=control
 
 	volData vol(expect,kappa,variance,volatility,correlation);
 	stockData sd(timeT,freeRate,volatility,initPrice,strikePrice);
 	heston bs(sd,vol);
 	data_t call,put;
-	bs.simulation(&call,&put);
+	bs.simulation(&call,&put,num_sims);
 	
 	*pCall=call;
 	*pPut=put;
