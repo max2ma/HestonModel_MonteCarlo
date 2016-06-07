@@ -61,14 +61,14 @@ using namespace std;
 
 namespace Params 
 {
-	double theta = 0.019;		    
-	double kappa = 6.21;			
-	double xi = 0.61;   	
-	double rho = -0.7;	
+	double theta = 0.04;		    
+	double kappa = 0.5;			
+	double xi = 1;   	
+	double rho = 0;	
 	double S0 = 100;		
 	double K = 100;			 
-	double rate = 0.0319;   	
-	double volatility = 0.10201;
+	double rate = 0.0;   	
+	double volatility = 0.04;
 	double T = 1.0;	
 	double upB=110;
 	double lowB=90;

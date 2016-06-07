@@ -7,9 +7,9 @@
 #include "heston.h"
 
 const int heston::NUM_RNGS=2;
-const int heston::NUM_SIMS=2;
-const int heston::NUM_SIMGROUPS=512;
-const int heston::NUM_STEPS=128;
+const int heston::NUM_SIMS=4;
+const int heston::NUM_SIMGROUPS=4;
+const int heston::NUM_STEPS=32;
 
 heston::heston(stockData data,volData vol,barrierData bData)
 	:data(data),vol(vol),bData(bData)
