@@ -58,34 +58,3 @@ void hestonEuroBarrier(data_t *pCall, data_t *pPut,   // call price and put pric
 	*pPut=put;
 	return;
 }
-/*
-#include "hestonEuroBarrier.h"
-#include "heston.h"
-
-
-
-void hestonEuroBarrier(data_t acc,data_t *pCall,data_t *pPut,
-		stockData *data,volData *vol,barrierData *bD)
-{
-#pragma HLS INTERFACE s_axilite port=acc bundle=control
-#pragma HLS INTERFACE s_axilite port=acc  bundle=gmem
-#pragma HLS INTERFACE s_axilite port=pCall bundle=gmem
-#pragma HLS INTERFACE s_axilite port=pCall bundle=control
-#pragma HLS INTERFACE s_axilite port=pPut bundle=gmem
-#pragma HLS INTERFACE s_axilite port=pPut bundle=control
-#pragma HLS INTERFACE s_axilite port=data bundle=control
-#pragma HLS INTERFACE s_axilite port=data  bundle=gmem
-#pragma HLS INTERFACE s_axilite port=vol bundle=control
-#pragma HLS INTERFACE s_axilite port=vol  bundle=gmem
-#pragma HLS INTERFACE s_axilite port=bD bundle=control
-#pragma HLS INTERFACE s_axilite port=bD  bundle=gmem
-#pragma HLS INTERFACE s_axilite port=return bundle=control
-
-	heston bs(*data,*vol,*bD,acc);
-	data_t call,put;
-	bs.simulation(&call,&put);
-	*pCall=call;
-	*pPut=put;
-	return;
-}
-*/

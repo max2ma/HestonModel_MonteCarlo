@@ -112,7 +112,9 @@ The values of these parameters, except for the name of the kernel, have a defaul
 The call price and the put price are used for functional verification only (they are the expected output values for a given set of input values)
 
 For example, the RTL emulation can be executed as follows to use the European
-vanilla option with the default parameter values:
+vanilla option with the default parameter values but a much shorter simulation
+time (that would prevent convergence of the Monte Carlo simulation):
+
 > run_emulation -flow hardware -args "-n hestonEuro -p 5.89 -c 8.71 -s 2"
 
 
@@ -120,7 +122,7 @@ Argument |  Meaning and default value
 :-------- | :---
 -n 	 | kernel name, to be passed to the OpenCL runtime (no default; must be hestonBarrier or hestonEuro)
 -a 	 | OpenCl binary file name, to be passed to the OpenCL runtime (heston.xclbin)
--s       | number of simulation runs N (2)
+-s       | number of simulation runs N (512)
 -c       | expected call price (for verification)
 -p       | expected put price (for verification)
 
