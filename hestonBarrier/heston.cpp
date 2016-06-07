@@ -6,9 +6,9 @@
 */
 #include "heston.h"
 
-const int heston::NUM_RNGS=256;
+const int heston::NUM_RNGS=2;
 const int heston::NUM_SIMS=16;
-const int heston::NUM_SIMGROUPS=256;
+const int heston::NUM_SIMGROUPS=64;
 const int heston::NUM_STEPS=1024;
 
 heston::heston(stockData data,volData vol,barrierData bData)
@@ -62,6 +62,12 @@ void heston::sampleSIM(RNG* mt_rng, data_t* call,data_t* put)
 	data_t bBarrier[NUM_RNGS][NUM_SIMGROUPS];
 #pragma HLS ARRAY_PARTITION variable=bBarrier complete dim=1
 
+	for(int i =0;i<NUM_RNGS;i++)
+	{
+#pragma HLS UNROLL
+		sCall[i]=0;
+		sPut[i]=0;
+	}
 	loop_init:for(int s=0;s<NUM_SIMGROUPS;s++)
 	{
 		for(int i =0;i<NUM_RNGS;i++)
@@ -83,8 +89,8 @@ void heston::sampleSIM(RNG* mt_rng, data_t* call,data_t* put)
 				loop_parallel:for(uint i=0;i<NUM_RNGS;i++)
 				{
 #pragma HLS UNROLL
-					//if(!bBarrier[i][s])
-					//	continue;
+					if(!bBarrier[i][s])
+						continue;
 					mt_rng[i].BOX_MULLER(&num1[i][s],&num2[i][s],pVols[i][s]);
 
 					stockPrice[i][s]*=exp(ratio3-pVols[i][s]*0.5f+num1[i][s]*vol.correlation+num2[i][s]*ratio2);
@@ -94,6 +100,7 @@ void heston::sampleSIM(RNG* mt_rng, data_t* call,data_t* put)
 					}
 					vols[i][s]+=ratio4-vol.kappa*pVols[i][s]+vol.variance*num1[i][s];
 					pVols[i][s]=fmaxf(vols[i][s],0)*Dt;
+					
 				}
 			}
 		}
@@ -108,7 +115,7 @@ void heston::sampleSIM(RNG* mt_rng, data_t* call,data_t* put)
 				{
 					if(stockPrice[i][s]>data.strikePrice)
 					{
-						sCall[i]=stockPrice[i][s]-data.strikePrice;
+						sCall[i]+=stockPrice[i][s]-data.strikePrice;
 					}
 					else
 					{
