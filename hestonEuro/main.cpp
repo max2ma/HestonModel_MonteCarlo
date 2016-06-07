@@ -70,7 +70,7 @@ namespace Params
 	double rate = 0.0319;   	
 	double volatility = 0.10201;
 	double T = 1.0;	
-	int num_sims = 2;
+	int num_sims = 512;
 	char *kernel_name=NULL;     // -n
 	char *binary_name=NULL;     // -a
 }
