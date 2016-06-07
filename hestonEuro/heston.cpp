@@ -7,8 +7,8 @@
 #include "heston.h"
 
 const int heston::NUM_RNGS=2;
-const int heston::NUM_SIMGROUPS=32;
-const int heston::NUM_STEPS=128;
+const int heston::NUM_SIMGROUPS=2;
+const int heston::NUM_STEPS=16;
 
 heston::heston(stockData data,volData vol):data(data),vol(vol)
 {
@@ -39,7 +39,8 @@ void heston::sampleSIM(RNG* mt_rng, data_t* call,data_t* put, int num_sims)
 	const data_t Dt=data.timeT/NUM_STEPS,
 			ratio1=expf(-data.freeRate*data.timeT)*data.strikePrice,
 			ratio2=sqrtf(fmaxf(1-vol.correlation*vol.correlation,0)),
-			ratio3=Dt*data.freeRate,ratio4=vol.kappa*vol.expect*Dt,
+			ratio3=Dt*data.freeRate,
+			ratio4=vol.kappa*vol.expect*Dt,
 			logPrice = logf(data.initPrice/data.strikePrice),
 			volInit = fmaxf(vol.initValue,0)*Dt;
 
@@ -60,7 +61,12 @@ void heston::sampleSIM(RNG* mt_rng, data_t* call,data_t* put, int num_sims)
 	data_t num1[NUM_RNGS][NUM_SIMGROUPS],num2[NUM_RNGS][NUM_SIMGROUPS];
 #pragma HLS ARRAY_PARTITION variable=num2 complete dim=1
 #pragma HLS ARRAY_PARTITION variable=num1 complete dim=1
-
+	for(int i =0;i<NUM_RNGS;i++)
+	{
+#pragma HLS UNROLL
+		sCall[i]=0;
+		sPut[i]=0;
+	}
 	loop_init:for(int s=0;s<NUM_SIMGROUPS;s++)
 	{
 		for(int i =0;i<NUM_RNGS;i++)
