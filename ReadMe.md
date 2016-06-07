@@ -12,7 +12,7 @@ The [Heston model][Heston Model], which was first published by Steven Heston in 
 Entering more specifically into the financial sector operations, two styles of stock transaction [options][option] are considered in this project, namely the European vanilla option and European barrier option (which is one of the [exotic options][exotic options]).
 [Call options][Call options] and [put options][put options] are defined reciprocally. Given the basic parameters for an option, namely expiration date and strike price, the call/put payoff price could be estimated.
 [option]: https://en.wikipedia.org/wiki/Option_style
-[exotic option]: https://en.wikipedia.org/wiki/Exotic_option
+[exotic options]: https://en.wikipedia.org/wiki/Exotic_option
 
 ### The Monte Carlo Method
 The [Monte Carlo Method][Monte Carlo] is one of the most widely used approaches to simulate stochastic processes, like the stock price and volatility modeled with Heston. This is especially true for exotic options, which are usually not solvable analytically. In this project, the Monte Carlo Method is used to estimate the payoff price of a given instrument using the Heston model.
@@ -65,6 +65,8 @@ hestonModel
 │   │   RNG.cpp
 │   │   stockData.h
 │   │   stockData.cpp
+│   │   volatilityData.h
+│   │   volatilityData.cpp
 │   └─  ML_cl.h
 │
 └── hestonEuro
@@ -92,6 +94,8 @@ solution.tcl   | Script to run sdaccel
 heston.h | It declares the Heston model object instantiated in the top functions (same methods for European and European barrier option).
 heston.cpp | It defines the Heston model object instantiated in the top functions. Note that the definitions of the object methods are different between the European and European barrier options.
 stockData.cpp	 | Basic stock datasets. It defines an object instantiated in the top functions
+volatilityData.cpp | Basic volatility datasets used in Heston model. It defines an object instantiated in the top functions.
+hestonEuroBarrier.cpp | Up and Down Barrier datasets. 
 RNG.cpp   | Random Number Generator class. It defines an object instantiated in the blackSholes objects.
 main.cpp  |  Host code calling the kernels, Input parameters for the kernels can be changed from the comman line.
 ML_cl.h | CL/cl.hpp for OpenCL 1.2.6
@@ -159,7 +163,7 @@ The time taken by the algorithm is ![$$T=\alpha M \cdot N+\beta N+\gamma M+\thet
 - Estimate the average
 
 We can see that ![$\alpha$] is related to the latency of the inner loop. One of
-the main factors that limit it is the latency of generating a random number. 
+the main factors that limit it is the latency of generating a random number.
 
 ### Performance Comparison
 - Intel HD Graphics 4400 laptop GPU, with 80 cores, 1100MHz

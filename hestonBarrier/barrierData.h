@@ -13,7 +13,7 @@ class barrierData
 {
 public:
 	data_t upBarrier;
-	data_t lowBarrier;
+	data_t downBarrier;
 
 	barrierData(data_t,data_t);
 	barrierData(const barrierData&);

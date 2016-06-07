@@ -7,15 +7,32 @@
 #include "heston.h"
 
 const int heston::NUM_RNGS=2;
-const int heston::NUM_SIMS=512;
-const int heston::NUM_SIMGROUPS=32;
+const int heston::NUM_SIMS=2;
+const int heston::NUM_SIMGROUPS=512;
 const int heston::NUM_STEPS=128;
 
 heston::heston(stockData data,volData vol,barrierData bData)
 	:data(data),vol(vol),bData(bData)
 {
 }
+void heston::simulation(data_t* pCall, data_t *pPut)
+{
 
+	RNG mt_rng[NUM_RNGS];
+#pragma HLS ARRAY_PARTITION variable=mt_rng complete dim=1
+
+	uint seeds[NUM_RNGS];
+#pragma HLS ARRAY_PARTITION variable=seeds complete dim=1
+
+	loop_seed:for(int i=0;i<NUM_RNGS;i++)
+	{
+#pragma HLS UNROLL
+		seeds[i]=i;
+	}
+	RNG::init_array(mt_rng,seeds,NUM_RNGS);
+	return sampleSIM(mt_rng,pCall,pPut);
+
+}
 void heston::sampleSIM(RNG* mt_rng, data_t* call,data_t* put)
 {
 	const data_t Dt=data.timeT/NUM_STEPS,
@@ -23,9 +40,7 @@ void heston::sampleSIM(RNG* mt_rng, data_t* call,data_t* put)
 			ratio2=sqrtf(fmaxf(1-vol.correlation*vol.correlation,0)),
 			ratio3=Dt*data.freeRate,
 			ratio4=vol.kappa*vol.expect*Dt,
-			volInit =fmaxf(vol.initValue,0)*Dt,
-			upB=bData.upBarrier,
-			lowB=bData.lowBarrier;
+			volInit =fmaxf(vol.initValue,0)*Dt;
 
 	data_t fCall=0,fPut=0;
 	data_t sCall[NUM_RNGS],sPut[NUM_RNGS];
@@ -72,8 +87,8 @@ void heston::sampleSIM(RNG* mt_rng, data_t* call,data_t* put)
 						continue;
 					mt_rng[i].BOX_MULLER(&num1[i][s],&num2[i][s],pVols[i][s]);
 
-					stockPrice[i][s]*=1+ratio3+num1[i][s]*vol.correlation+num2[i][s]*ratio2;
-					if(stockPrice[i][s]<lowB || stockPrice[i][s]>upB)
+					stockPrice[i][s]*=exp(ratio3-pVols[i][s]*0.5f+num1[i][s]*vol.correlation+num2[i][s]*ratio2);
+					if(stockPrice[i][s]<bData.downBarrier || stockPrice[i][s]>bData.upBarrier)
 					{
 						bBarrier[i][s]=false;
 					}
@@ -113,23 +128,4 @@ void heston::sampleSIM(RNG* mt_rng, data_t* call,data_t* put)
 	}
 	*call= ratio1*fCall/NUM_RNGS/NUM_SIMS/NUM_SIMGROUPS;
 	*put= ratio1*fPut/NUM_RNGS/NUM_SIMS/NUM_SIMGROUPS;
-}
-
-void heston::simulation(data_t* pCall, data_t *pPut)
-{
-
-	RNG mt_rng[NUM_RNGS];
-#pragma HLS ARRAY_PARTITION variable=mt_rng complete dim=1
-
-	uint seeds[NUM_RNGS];
-#pragma HLS ARRAY_PARTITION variable=seeds complete dim=1
-
-	loop_seed:for(int i=0;i<NUM_RNGS;i++)
-	{
-#pragma HLS UNROLL
-		seeds[i]=i;
-	}
-	RNG::init_array(mt_rng,seeds,NUM_RNGS);
-	return sampleSIM(mt_rng,pCall,pPut);
-
 }
