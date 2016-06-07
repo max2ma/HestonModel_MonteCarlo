@@ -65,6 +65,8 @@ hestonModel
 │   │   RNG.cpp
 │   │   stockData.h
 │   │   stockData.cpp
+│   │   volatilityData.h
+│   │   volatilityData.cpp
 │   │   heston.h
 │   └─  ML_cl.h
 │
@@ -93,6 +95,8 @@ solution.tcl   | Script to run sdaccel
 heston.h | It declares the Heston model object instantiated in the top functions (same methods for European and European barrier option).
 heston.cpp | It defines the Heston model object instantiated in the top functions. Note that the definitions of the object methods are different between the European and European barrier options.
 stockData.cpp	 | Basic stock datasets. It defines an object instantiated in the top functions
+volatilityData.cpp | Basic volatility datasets used in Heston model. It defines an object instantiated in the top functions.
+hestonEuroBarrier.cpp | Up and Down Barrier datasets. 
 RNG.cpp   | Random Number Generator class. It defines an object instantiated in the blackSholes objects.
 main.cpp  |  Host code calling the kernels, Input parameters for the kernels can be changed from the comman line.
 ML_cl.h | CL/cl.hpp for OpenCL 1.2.6
@@ -148,7 +152,7 @@ The time taken by the algorithm is ![$$T=\alpha M \cdot N+\beta N+\gamma M+\thet
 - Estimate the average
 
 We can see that ![$\alpha$] is related to the latency of the inner loop. One of
-the main factors that limit it is the latency of generating a random number. 
+the main factors that limit it is the latency of generating a random number.
 
 ### Performance Comparison
 - Intel HD Graphics 4400 laptop GPU, with 80 cores, 1100MHz
