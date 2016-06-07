@@ -114,8 +114,8 @@ vanilla option with the default parameter values:
 
 Argument |  Meaning and default value
 :-------- | :---
--n 	 | the kernel name, to be passed to the OpenCL runtime (no default; must be hestonBarrier or hestonEuro)
--a 	 | the OpenCl binary file name, to be passed to the OpenCL runtime (heston.xclbin)
+-n 	 | kernel name, to be passed to the OpenCL runtime (no default; must be hestonBarrier or hestonEuro)
+-a 	 | OpenCl binary file name, to be passed to the OpenCL runtime (heston.xclbin)
 -s       | number of simulation runs N (2)
 -c       | expected call price (for verification)
 -p       | expected put price (for verification)
