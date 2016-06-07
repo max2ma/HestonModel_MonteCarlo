@@ -77,9 +77,8 @@ hestonModel
 └── hestonEuro
 │   │   solution.tcl
 │   │   main.cpp
-│   │   hestonEuro.cpp
-│   │   heston.h
-│   └─  heston.cpp
+│   │   hestonEuro.h
+│   └─  hestonEuro.cpp
 │
 └── hestonBarrier
     │   solution.tcl

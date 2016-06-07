@@ -24,7 +24,6 @@ create_kernel -type c hestonEuro
 # Adding files for a kernel works in the same way as adding files for host code.
 # User must associate source files to specific kernels using the -kernel option to the add_files command
 add_files -kernel [get_kernels hestonEuro] "hestonEuro.cpp"
-add_files -kernel [get_kernels hestonEuro] "heston.cpp"
 add_files -kernel [get_kernels hestonEuro] "../common/RNG.cpp"
 add_files -kernel [get_kernels hestonEuro] "../common/stockData.cpp"
 add_files -kernel [get_kernels hestonEuro] "../common/volatilityData.cpp"
@@ -62,6 +61,3 @@ run_emulation -flow hardware -args "-a heston.xclbin -n hestonEuro -p 5.9 -c 8.7
 
 # Run the application in hardware
 #run_system -args "-a heston.xclbin -n heston"
-
-
-
