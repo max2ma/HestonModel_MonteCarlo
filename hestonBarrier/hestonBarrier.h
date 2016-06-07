@@ -7,7 +7,7 @@
 #ifndef __HESTON_H__
 #define __HESTON_H__
 
-#include "barrierData.h"
+#include "../common/barrierData.h"
 #include "../common/stockData.h"
 #include "../common/volatilityData.h"
 #include "../common/RNG.h"

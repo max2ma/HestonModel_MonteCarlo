@@ -23,12 +23,12 @@ create_kernel -type c hestonEuroBarrier
 
 # Adding files for a kernel works in the same way as adding files for host code.
 # User must associate source files to specific kernels using the -kernel option to the add_files command
-add_files -kernel [get_kernels hestonEuroBarrier] "hestonEuroBarrier.cpp"
-add_files -kernel [get_kernels hestonEuroBarrier] "heston.cpp"
+
+add_files -kernel [get_kernels hestonEuroBarrier] "hestonBarrier.cpp"
 add_files -kernel [get_kernels hestonEuroBarrier] "../common/RNG.cpp"
 add_files -kernel [get_kernels hestonEuroBarrier] "../common/stockData.cpp"
 add_files -kernel [get_kernels hestonEuroBarrier] "../common/volatilityData.cpp"
-add_files -kernel [get_kernels hestonEuroBarrier] "barrierData.cpp"
+add_files -kernel [get_kernels hestonEuroBarrier] "../common/barrierData.cpp"
 # Create a binary container. Every SDAccel application has at least 1 binary container to hold the FPGA binary.
 create_opencl_binary heston
 # Depending on configuration, a target device may have 1 or more areas reserved for kernels compiled by SDAccel
