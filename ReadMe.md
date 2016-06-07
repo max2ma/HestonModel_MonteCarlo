@@ -32,7 +32,10 @@ The [Mersenne Twister][Mersenne Twister] is an algorithm to generate uniformly d
 
 
 #### Box-Muller transform
-The [Box Muller transformation][Box Muller transformation] transforms a pair of independent, uniformly distributed random numbers in the interval (0,1) into a pair of independent normally distributed random numbers, which are required for simulating the Black Scholes model.
+The [Box Muller transformation][Box Muller transformation] transforms a pair of
+independent, uniformly distributed random numbers in the interval (0,1) into a
+pair of independent normally distributed random numbers, which are required for
+simulating the Heston model.
 Given two independent ![$U_1$,$U_2 \sim U(0,1)$],
 
 ![$$Z_1=\sqrt{-2ln(U_1)}cos(2\pi U_2)\\Z_2=\sqrt{-2ln(U_1)}sin(2\pi U_2)$$]
@@ -95,9 +98,10 @@ heston.h | It declares the Heston model object instantiated in the top functions
 heston.cpp | It defines the Heston model object instantiated in the top functions. Note that the definitions of the object methods are different between the European and European barrier options.
 stockData.cpp	 | Basic stock datasets. It defines an object instantiated in the top functions
 volatilityData.cpp | Basic volatility datasets used in Heston model. It defines an object instantiated in the top functions.
-hestonEuroBarrier.cpp | Up and Down Barrier datasets. 
-RNG.cpp   | Random Number Generator class. It defines an object instantiated in the blackSholes objects.
-main.cpp  |  Host code calling the kernels, Input parameters for the kernels can be changed from the comman line.
+hestonEuroBarrier.cpp | Up and Down Barrier datasets.
+RNG.cpp   | Random Number Generator class. It defines an object instantiated in
+the Heston objects.
+main.cpp  |  Host code calling the kernels, Input parameters for the kernels can be changed from the command line.
 ML_cl.h | CL/cl.hpp for OpenCL 1.2.6
 
 Note that in the repository we had to include the OpenCL header for version 1.2.6, instead of the version 1.1 installed by sdaccel, because the latter causes compile-time errors. SDAccel and Vivado HLS work perfectly well with this header.
@@ -114,8 +118,8 @@ vanilla option with the default parameter values:
 
 Argument |  Meaning and default value
 :-------- | :---
--n 	 | the kernel name, to be passed to the OpenCL runtime (no default; must be hestonBarrier or hestonEuro)
--a 	 | the OpenCl binary file name, to be passed to the OpenCL runtime (heston.xclbin)
+-n 	 | kernel name, to be passed to the OpenCL runtime (no default; must be hestonBarrier or hestonEuro)
+-a 	 | OpenCl binary file name, to be passed to the OpenCL runtime (heston.xclbin)
 -s       | number of simulation runs N (2)
 -c       | expected call price (for verification)
 -p       | expected put price (for verification)
@@ -126,10 +130,9 @@ Parameter |  information
 :-------- | :---
 NUM_STEPS    | number of time steps (M)
 NUM_RNGS | number of RNGs running in parallel, proportional to the area cost
-NUM_SIMGROUPS  | number of simulation groups (each with ![$NUM\_RNG \cdot NUM\_SIMS$] simulations) running in pipeline, proportional to the execution time
-NUM_SIMS   | number of simulations running in parallel for a given RNG (512 optimizes BRAM usage)
+NUM_SIMGROUPS  | number of simulation groups (each with ![$NUM\_RNG \cdot NUM\_SIMS$] simulations) running in pipeline, proportional to the execution time (512 optimizes BRAM usage)
 
-The area cost is proposrtional to NUM_RNG.
+The area cost is proportional to NUM_RNG.
 ### How to run an example
 In each sub-directory, there is a script file called "solution.tcl". It can be used as follows:
 
@@ -139,7 +142,8 @@ The result of the call/put payoff price estimation will be printed on standard I
 
 Please note that RTL simulation can take a very long time for the Heston model.
 In order to obtain (imprecise) results quickly, the computation cost C can be
-reduced. For instance, NUM_SIMGROUPS has been set to 2 in the TCL script.
+reduced. For instance, NUM_SIMS has been set to 2 in the TCL script. Better
+results can be obtained with values like 512 or more.
 
 ## Performance Metrics
 

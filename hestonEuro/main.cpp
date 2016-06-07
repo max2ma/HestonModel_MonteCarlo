@@ -70,6 +70,7 @@ namespace Params
 	double rate = 0.0319;   	
 	double volatility = 0.10201;
 	double T = 1.0;	
+	int num_sims = 2;
 	char *kernel_name=NULL;     // -n
 	char *binary_name=NULL;     // -a
 }
@@ -87,7 +88,6 @@ int main(int argc, char** argv)
 {
 	int opt;
 	double callR=-1, putR=-1;
-	int num_sims=512;
 	bool flaga=false,flagc=false,flagp=false,flagn=false;
 	while((opt=getopt(argc,argv,"n:a:c:p:s:"))!=-1){
 		switch(opt){
@@ -108,7 +108,7 @@ int main(int argc, char** argv)
 				flagp=true;
 				break;
 			case 's':
-				num_sims=atof(optarg);
+				Params::num_sims=atof(optarg);
 				break;
 			default:
 				usage(argv[0]);
@@ -172,7 +172,7 @@ int main(int argc, char** argv)
 						Params::volatility,
 						Params::S0,
 						Params::K,
-						num_sims);
+						Params::num_sims);
 
 		commandQueue.finish();
 		event.wait();
