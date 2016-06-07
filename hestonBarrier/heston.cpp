@@ -40,9 +40,7 @@ void heston::sampleSIM(RNG* mt_rng, data_t* call,data_t* put)
 			ratio2=sqrtf(fmaxf(1-vol.correlation*vol.correlation,0)),
 			ratio3=Dt*data.freeRate,
 			ratio4=vol.kappa*vol.expect*Dt,
-			volInit =fmaxf(vol.initValue,0)*Dt,
-			upB=bData.upBarrier,
-			lowB=bData.lowBarrier;
+			volInit =fmaxf(vol.initValue,0)*Dt;
 
 	data_t fCall=0,fPut=0;
 	data_t sCall[NUM_RNGS],sPut[NUM_RNGS];
@@ -90,7 +88,7 @@ void heston::sampleSIM(RNG* mt_rng, data_t* call,data_t* put)
 					mt_rng[i].BOX_MULLER(&num1[i][s],&num2[i][s],pVols[i][s]);
 
 					stockPrice[i][s]*=exp(ratio3-pVols[i][s]*0.5f+num1[i][s]*vol.correlation+num2[i][s]*ratio2);
-					if(stockPrice[i][s]<lowB || stockPrice[i][s]>upB)
+					if(stockPrice[i][s]<bData.downBarrier || stockPrice[i][s]>bData.upBarrier)
 					{
 						bBarrier[i][s]=false;
 					}
@@ -131,5 +129,3 @@ void heston::sampleSIM(RNG* mt_rng, data_t* call,data_t* put)
 	*call= ratio1*fCall/NUM_RNGS/NUM_SIMS/NUM_SIMGROUPS;
 	*put= ratio1*fPut/NUM_RNGS/NUM_SIMS/NUM_SIMGROUPS;
 }
-
-

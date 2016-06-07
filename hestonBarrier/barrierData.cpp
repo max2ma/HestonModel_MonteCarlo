@@ -10,35 +10,35 @@
 #include <iostream>
 using namespace std;
 #endif
-barrierData::barrierData(data_t upBarrier, data_t lowBarrier)
+barrierData::barrierData(data_t upBarrier, data_t downBarrier)
 {
-	if(upBarrier<lowBarrier)
+	if(upBarrier<downBarrier)
 	{
 		this->upBarrier=0;
-		this->lowBarrier=0;
+		this->downBarrier=0;
 	}
 	else
 	{
 		this->upBarrier=upBarrier;
-		this->lowBarrier=lowBarrier;
+		this->downBarrier=downBarrier;
 	}
 }
 
 barrierData::barrierData(const barrierData& data)
 {
 	this->upBarrier=data.upBarrier;
-	this->lowBarrier=data.lowBarrier;
+	this->downBarrier=data.downBarrier;
 }
 
 bool barrierData::checkRange(data_t stockPrice)const
 {
-	return (stockPrice>=lowBarrier)&&(stockPrice<=upBarrier);
+	return (stockPrice>=downBarrier)&&(stockPrice<=upBarrier);
 }
 
 #ifdef __CLIANG__
 void barrierData::print()const
 {
-	cout<<"lowBarrier="<<lowBarrier<<' '
+	cout<<"downBarrier="<<downBarrier<<' '
 			<<"upBarrier="<<upBarrier<<endl;
 }
 #endif
