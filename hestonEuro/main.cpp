@@ -108,7 +108,7 @@ int main(int argc, char** argv)
 				flagp=true;
 				break;
 			case 's':
-				Params::num_sims=atof(optarg);
+				Params::num_sims=atoi(optarg);
 				break;
 			default:
 				usage(argv[0]);

@@ -6,10 +6,10 @@
 */
 #include "heston.h"
 
-const int heston::NUM_RNGS=2;
-const int heston::NUM_SIMS=4;
-const int heston::NUM_SIMGROUPS=4;
-const int heston::NUM_STEPS=32;
+const int heston::NUM_RNGS=256;
+const int heston::NUM_SIMS=16;
+const int heston::NUM_SIMGROUPS=256;
+const int heston::NUM_STEPS=1024;
 
 heston::heston(stockData data,volData vol,barrierData bData)
 	:data(data),vol(vol),bData(bData)
@@ -36,7 +36,7 @@ void heston::simulation(data_t* pCall, data_t *pPut)
 void heston::sampleSIM(RNG* mt_rng, data_t* call,data_t* put)
 {
 	const data_t Dt=data.timeT/NUM_STEPS,
-			ratio1=expf(-data.freeRate*data.timeT)*data.strikePrice,
+			ratio1=expf(-data.freeRate*data.timeT),
 			ratio2=sqrtf(fmaxf(1-vol.correlation*vol.correlation,0)),
 			ratio3=Dt*data.freeRate,
 			ratio4=vol.kappa*vol.expect*Dt,
@@ -83,8 +83,8 @@ void heston::sampleSIM(RNG* mt_rng, data_t* call,data_t* put)
 				loop_parallel:for(uint i=0;i<NUM_RNGS;i++)
 				{
 #pragma HLS UNROLL
-					if(!bBarrier[i][s])
-						continue;
+					//if(!bBarrier[i][s])
+					//	continue;
 					mt_rng[i].BOX_MULLER(&num1[i][s],&num2[i][s],pVols[i][s]);
 
 					stockPrice[i][s]*=exp(ratio3-pVols[i][s]*0.5f+num1[i][s]*vol.correlation+num2[i][s]*ratio2);

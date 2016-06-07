@@ -40,6 +40,7 @@ void hestonEuro(data_t *pCall, data_t *pPut,   // call price and put price
 #pragma HLS INTERFACE s_axilite port=initPrice bundle=control
 #pragma HLS INTERFACE s_axilite port=strikePrice bundle=gmem
 #pragma HLS INTERFACE s_axilite port=strikePrice bundle=control
+#pragma HLS INTERFACE s_axilite port=num_sims bundle=gmem
 #pragma HLS INTERFACE s_axilite port=num_sims bundle=control
 #pragma HLS INTERFACE s_axilite port=return bundle=control
 
