@@ -7,8 +7,8 @@
 #include "heston.h"
 
 const int heston::NUM_RNGS=2;
-const int heston::NUM_SIMS=512;
-const int heston::NUM_SIMGROUPS=32;
+const int heston::NUM_SIMS=2;
+const int heston::NUM_SIMGROUPS=512;
 const int heston::NUM_STEPS=128;
 
 heston::heston(stockData data,volData vol,barrierData bData)
@@ -89,7 +89,7 @@ void heston::sampleSIM(RNG* mt_rng, data_t* call,data_t* put)
 						continue;
 					mt_rng[i].BOX_MULLER(&num1[i][s],&num2[i][s],pVols[i][s]);
 
-					stockPrice[i][s]*=1+ratio3+num1[i][s]*vol.correlation+num2[i][s]*ratio2;
+					stockPrice[i][s]*=exp(ratio3-pVols[i][s]*0.5f+num1[i][s]*vol.correlation+num2[i][s]*ratio2);
 					if(stockPrice[i][s]<lowB || stockPrice[i][s]>upB)
 					{
 						bBarrier[i][s]=false;
