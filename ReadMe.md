@@ -98,7 +98,7 @@ heston.h | It declares the Heston model object instantiated in the top functions
 heston.cpp | It defines the Heston model object instantiated in the top functions. Note that the definitions of the object methods are different between the European and European barrier options.
 stockData.cpp	 | Basic stock datasets. It defines an object instantiated in the top functions
 volatilityData.cpp | Basic volatility datasets used in Heston model. It defines an object instantiated in the top functions.
-hestonEuroBarrier.cpp | Up and Down Barrier datasets. 
+hestonEuroBarrier.cpp | Up and Down Barrier datasets.
 RNG.cpp   | Random Number Generator class. It defines an object instantiated in
 the Heston objects.
 main.cpp  |  Host code calling the kernels, Input parameters for the kernels can be changed from the command line.
@@ -130,7 +130,7 @@ Parameter |  information
 :-------- | :---
 NUM_STEPS    | number of time steps (M)
 NUM_RNGS | number of RNGs running in parallel, proportional to the area cost
-NUM_SIMGROUPS  | number of simulation groups (each with ![$NUM\_RNG \cdot NUM\_SIMS$] simulations) running in pipeline, proportional to the execution time
+NUM_SIMGROUPS  | number of simulation groups (each with ![$NUM\_RNG \cdot NUM\_SIMS$] simulations) running in pipeline, proportional to the execution time (512 optimizes BRAM usage)
 
 The area cost is proportional to NUM_RNG.
 ### How to run an example
