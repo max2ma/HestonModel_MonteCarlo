@@ -19,6 +19,9 @@
 *
 * Author:   Liang Ma (liang-ma@polito.it)
 *
+* Top function is defined here with interface specified as axi4.
+* It creates an object of heston and launches the simulation.
+*
 *----------------------------------------------------------------------------
 */
 #include "hestonBarrier.h"
@@ -84,7 +87,6 @@ void hestonEuroBarrier(data_t *pCall, data_t *pPut,   // call price and put pric
 
 
 const int heston::NUM_RNGS=2;
-const int heston::NUM_SIMS=2;
 const int heston::NUM_SIMGROUPS=64;
 const int heston::NUM_STEPS=64;
 
@@ -107,10 +109,10 @@ void heston::simulation(data_t* pCall, data_t *pPut, int num_sims)
 		seeds[i]=i;
 	}
 	RNG::init_array(mt_rng,seeds,NUM_RNGS);
-	return sampleSIM(mt_rng,pCall,pPut);
+	return sampleSIM(mt_rng,pCall,pPut,num_sims);
 
 }
-void heston::sampleSIM(RNG* mt_rng, data_t* call,data_t* put)
+void heston::sampleSIM(RNG* mt_rng, data_t* call,data_t* put,int num_sims)
 {
 	const data_t Dt=data.timeT/NUM_STEPS,
 			ratio1=expf(-data.freeRate*data.timeT),
@@ -210,6 +212,6 @@ void heston::sampleSIM(RNG* mt_rng, data_t* call,data_t* put)
 		fCall+=sCall[i];
 		fPut+=sPut[i];
 	}
-	*call= ratio1*fCall/NUM_RNGS/NUM_SIMS/NUM_SIMGROUPS;
-	*put= ratio1*fPut/NUM_RNGS/NUM_SIMS/NUM_SIMGROUPS;
+	*call= ratio1*fCall/NUM_RNGS/num_sims/NUM_SIMGROUPS;
+	*put= ratio1*fPut/NUM_RNGS/num_sims/NUM_SIMGROUPS;
 }
