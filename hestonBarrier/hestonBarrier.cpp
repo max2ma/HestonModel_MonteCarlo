@@ -1,4 +1,21 @@
-/*----------------------------------------------------------------------------
+/*
+======================================================
+ Copyright 2016 Liang Ma
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+======================================================
+
+*----------------------------------------------------------------------------
 *
 * Author:   Liang Ma (liang-ma@polito.it)
 *
@@ -18,7 +35,8 @@ void hestonEuroBarrier(data_t *pCall, data_t *pPut,   // call price and put pric
 		data_t initPrice,			// stock price at time 0
 		data_t strikePrice,			// strike price
 		data_t upB,				// up barrier
-		data_t lowB)				// low barrier
+		data_t lowB,				// low barrier
+		int num_sims)
 {
 #pragma HLS INTERFACE m_axi port=pCall bundle=gmem
 #pragma HLS INTERFACE s_axilite port=pCall bundle=control
@@ -46,6 +64,8 @@ void hestonEuroBarrier(data_t *pCall, data_t *pPut,   // call price and put pric
 #pragma HLS INTERFACE s_axilite port=lowB bundle=control
 #pragma HLS INTERFACE s_axilite port=upB bundle=gmem
 #pragma HLS INTERFACE s_axilite port=upB bundle=control
+#pragma HLS INTERFACE s_axilite port=num_sims bundle=gmem
+#pragma HLS INTERFACE s_axilite port=num_sims bundle=control
 #pragma HLS INTERFACE s_axilite port=return bundle=control
 
 	volData vol(expect,kappa,variance,volatility,correlation);
@@ -53,8 +73,8 @@ void hestonEuroBarrier(data_t *pCall, data_t *pPut,   // call price and put pric
 	barrierData bD(upB,lowB);
 	heston bs(sd,vol,bD);
 	data_t call,put;
-	bs.simulation(&call,&put);
-	
+	bs.simulation(&call,&put,num_sims);
+
 	*pCall=call;
 	*pPut=put;
 	return;
@@ -72,7 +92,7 @@ heston::heston(stockData data,volData vol,barrierData bData)
 	:data(data),vol(vol),bData(bData)
 {
 }
-void heston::simulation(data_t* pCall, data_t *pPut)
+void heston::simulation(data_t* pCall, data_t *pPut, int num_sims)
 {
 
 	RNG mt_rng[NUM_RNGS];
@@ -136,7 +156,7 @@ void heston::sampleSIM(RNG* mt_rng, data_t* call,data_t* put)
 			bBarrier[i][s]=true;
 		}
 	}
-	loop_main:for(int j=0;j<NUM_SIMS;j++)
+	loop_main:for(int j=0;j<num_sims;j++)
 	{
 		loop_path:for(int path=0;path<NUM_STEPS;path++)
 		{
@@ -157,7 +177,7 @@ void heston::sampleSIM(RNG* mt_rng, data_t* call,data_t* put)
 					}
 					vols[i][s]+=ratio4-vol.kappa*pVols[i][s]+vol.variance*num1[i][s];
 					pVols[i][s]=fmaxf(vols[i][s],0)*Dt;
-					
+
 				}
 			}
 		}

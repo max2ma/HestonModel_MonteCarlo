@@ -1,4 +1,4 @@
-/* 
+/*
 ======================================================
  Copyright 2016 Liang Ma
 
@@ -17,7 +17,7 @@
 *
 * Author:   Liang Ma (liang-ma@polito.it)
 *
-* Host code defining all the parameters and launching the kernel. 
+* Host code defining all the parameters and launching the kernel.
 *
 * ML_cl.h is the OpenCL library file <CL/cl.hpp>. Currently the version shipped with SDAccel is buggy.
 *
@@ -29,17 +29,18 @@
 * and can be changed by using command line options. Only the kernel name must
 * be defined.
 *
-* S0:		-s stock price at time 0
-* K:		-k strike price
-* rate:		-r interest rate
-* volatility:	-v volatility of stock
-* T:		-t time period of the option
+* S0:		 stock price at time 0
+* K:		  strike price
+* rate:	interest rate
+* volatility:	 volatility of stock
+* T:		 time period of the option
 *
 *
 * callR:	-c reference value for call price
 * putR:		-p reference value for put price
 * binary_name:  -a the .xclbin binary name
 * kernel_name:  -n the kernel name
+* num_sims:					-s number of simulations
 *----------------------------------------------------------------------------
 */
 
@@ -59,19 +60,20 @@
 #include <unistd.h>
 using namespace std;
 
-namespace Params 
+namespace Params
 {
-	double theta = 0.04;		    
-	double kappa = 0.5;			
-	double xi = 1;   	
-	double rho = 0;	
-	double S0 = 100;		
-	double K = 100;			 
-	double rate = 0.0;   	
+	double theta = 0.04;
+	double kappa = 0.5;
+	double xi = 1;
+	double rho = 0;
+	double S0 = 100;
+	double K = 100;
+	double rate = 0.0;
 	double volatility = 0.04;
-	double T = 1.0;	
+	double T = 1.0;
 	double upB=110;
 	double lowB=90;
+	int num_sims = 512;
 	char *kernel_name=NULL;     // -n
 	char *binary_name=NULL;     // -a
 }
@@ -82,6 +84,7 @@ void usage(char* name)
         <<" -n kernel_name"
         <<" [-c call_price]"
         <<" [-p put_price]"
+        <<" [-s num_sims]"
         <<endl;
 }
 int main(int argc, char** argv)
@@ -89,7 +92,7 @@ int main(int argc, char** argv)
 	int opt;
 	double callR=-1, putR=-1;
 	bool flaga=false,flagc=false,flagp=false,flagn=false;
-	while((opt=getopt(argc,argv,"n:a:c:p:"))!=-1){
+	while((opt=getopt(argc,argv,"n:a:c:p:s:"))!=-1){
 		switch(opt){
 			case 'n':
 				Params::kernel_name=optarg;
@@ -107,6 +110,9 @@ int main(int argc, char** argv)
 				putR=atof(optarg);
 				flagp=true;
 				break;
+			case 's':
+				Params::num_sims=atoi(optarg);
+				break;
 			default:
 				usage(argv[0]);
 				return -1;
@@ -117,7 +123,7 @@ int main(int argc, char** argv)
 		usage(argv[0]);
 		return -1;
 	}
-	ifstream ifstr(Params::binary_name); 
+	ifstream ifstr(Params::binary_name);
 	const string programString(istreambuf_iterator<char>(ifstr),
 		(istreambuf_iterator<char>()));
 	vector<float> h_call(1),h_put(1);
@@ -149,8 +155,8 @@ int main(int argc, char** argv)
 		}
 
 		cl::CommandQueue commandQueue(context, devices[0]);
-		
-		typedef cl::make_kernel<cl::Buffer,cl::Buffer,float,float,float,float,float,float,float,float,float,float,float> kernelType;
+
+		typedef cl::make_kernel<cl::Buffer,cl::Buffer,float,float,float,float,float,float,float,float,float,float,float,int> kernelType;
 		kernelType kernelFunctor = kernelType(program, Params::kernel_name);
 
 		cl::Buffer d_call = cl::Buffer(context, CL_MEM_WRITE_ONLY, sizeof(float));
@@ -169,7 +175,8 @@ int main(int argc, char** argv)
 						Params::S0,
 						Params::K,
 						Params::upB,
-						Params::lowB
+						Params::lowB,
+						Params::num_sims
 						);
 
 		commandQueue.finish();
