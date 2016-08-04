@@ -38,7 +38,7 @@
 #define RNG_T 15
 #define RNG_C 0xEFC60000
 #define RNG_L 18
-
+#define __SINF_COSF_BUG_FIXED__
 
 #define lower_mask   0x7FFFFFFF//(1 << R) - 1
 #define upper_mask   0x80000000//~lower_mask
