@@ -8,7 +8,7 @@ set solution_results "results"
 create_solution -name $solution -force
 
 # Define the target devices for the current solution
-add_device -vbnv xilinx:adm-pcie-7v3:1ddr:2.0
+add_device -vbnv xilinx:adm-pcie-7v3:1ddr:2.1
 
 # Host Source Files
 add_files "main.cpp"
