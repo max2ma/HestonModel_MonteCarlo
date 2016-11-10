@@ -192,13 +192,14 @@ void heston::sampleSIM(RNG* mt_rng, data_t* call,data_t* put,int num_sims)
 				pVols[i][s]=volInit;
 				if(bBarrier[i][s])
 				{
+					float payoff = stockPrice[i][s]-data.strikePrice;
 					if(stockPrice[i][s]>data.strikePrice)
 					{
-						sCall[i]+=stockPrice[i][s]-data.strikePrice;
+						sCall[i]+= payoff;
 					}
 					else
 					{
-						sPut[i]+=data.strikePrice-stockPrice[i][s];
+						sPut[i]-=payoff;
 					}
 				}
 				stockPrice[i][s]=data.initPrice;
