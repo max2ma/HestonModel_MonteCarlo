@@ -169,13 +169,14 @@ void heston::sampleSIM(RNG* mt_rng, data_t* call,data_t* put, int num_sims)
 			loop_sum_r:for(int i =0;i<NUM_RNGS;i++)
 			{
 	#pragma HLS UNROLL
+				float payoff = expf(stockPrice[i][s])-1.0f;
 				if(stockPrice[i][s]>0.0f)
 				{
-					sCall[i]+=expf(stockPrice[i][s])-1.0f;
+					sCall[i]+=payoff;
 				}
 				else
 				{
-					sPut[i]+=1.0f-expf(stockPrice[i][s]);
+					sPut[i]-=payoff;
 				}
 				stockPrice[i][s]=logPrice;
 				vols[i][s]=vol.initValue;
