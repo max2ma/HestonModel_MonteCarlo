@@ -174,6 +174,7 @@ the main factors that limit it is the latency of generating a random number.
 - GeForce GTX 960 with 1024 cores, 1178MHz
 - Quadro K4200 with 1344 cores, 784MHz
 - Virtex 7 xc7vx690tffg1157-2, using the sin/cos functions, 160MHz
+- Virtex 7 xc7vx690tffg1157-2, using the sinf/cosf functions, 133MHz
 
 platform         |     t(ns)    | power(W)| energy/step(nJ)
 :--------------- | ------------:| -------:| --------:
@@ -181,6 +182,7 @@ HD 4400          |     6.918    |  15     |  104
 GTX 960          |     0.604    |  120    |  72     
 Quadro K4200     |     0.663    |  105    |  70     
 Virtex 7 sin/cos |     1.424    |  12     |  17     
+Virtex 7 sinf/cosf |     0.236    |  17.58     |  4.14     
 
 [Heston Model]: https://en.wikipedia.org/wiki/Heston_model
 [geometric Brownian motion]: https://en.wikipedia.org/wiki/Geometric_Brownian_motion
