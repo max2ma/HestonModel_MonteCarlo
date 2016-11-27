@@ -116,12 +116,12 @@ void heston::sampleSIM(RNG* mt_rng, data_t* call,data_t* put,int num_sims)
 {
 	const data_t Dt=data.timeT/NUM_STEPS,
 			ratio1=expf(-data.freeRate*data.timeT),
-			ratio2=sqrtf(fmaxf(1-vol.correlation*vol.correlation,0)),
+			ratio2=sqrtf(fmaxf(1.0f-vol.correlation*vol.correlation,0.0f)),
 			ratio3=Dt*data.freeRate,
 			ratio4=vol.kappa*vol.expect*Dt,
-			volInit =fmaxf(vol.initValue,0)*Dt;
+			volInit =fmaxf(vol.initValue,0.0f)*Dt;
 
-	data_t fCall=0,fPut=0;
+	data_t fCall=0.0f,fPut=0.0f;
 	data_t sCall[NUM_RNGS],sPut[NUM_RNGS];
 #pragma HLS ARRAY_PARTITION variable=sCall complete dim=1
 #pragma HLS ARRAY_PARTITION variable=sPut complete dim=1
@@ -144,8 +144,8 @@ void heston::sampleSIM(RNG* mt_rng, data_t* call,data_t* put,int num_sims)
 	for(int i =0;i<NUM_RNGS;i++)
 	{
 #pragma HLS UNROLL
-		sCall[i]=0;
-		sPut[i]=0;
+		sCall[i]=0.0f;
+		sPut[i]=0.0f;
 	}
 	loop_init:for(int s=0;s<NUM_SIMGROUPS;s++)
 	{
@@ -178,7 +178,7 @@ void heston::sampleSIM(RNG* mt_rng, data_t* call,data_t* put,int num_sims)
 						bBarrier[i][s]=false;
 					}
 					vols[i][s]+=ratio4-vol.kappa*pVols[i][s]+vol.variance*num1[i][s];
-					pVols[i][s]=fmaxf(vols[i][s],0)*Dt;
+					pVols[i][s]=fmaxf(vols[i][s],0.0f)*Dt;
 
 				}
 			}

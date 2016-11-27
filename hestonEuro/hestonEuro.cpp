@@ -103,14 +103,14 @@ void heston::sampleSIM(RNG* mt_rng, data_t* call,data_t* put, int num_sims)
 {
 	const data_t Dt=data.timeT/NUM_STEPS,
 			ratio1=expf(-data.freeRate*data.timeT)*data.strikePrice,
-			ratio2=sqrtf(fmaxf(1-vol.correlation*vol.correlation,0)),
+			ratio2=sqrtf(fmaxf(1.0f-vol.correlation*vol.correlation,0.0f)),
 			ratio3=Dt*data.freeRate,
 			ratio4=vol.kappa*vol.expect*Dt,
 			logPrice = logf(data.initPrice/data.strikePrice),
-			volInit = fmaxf(vol.initValue,0)*Dt;
+			volInit = fmaxf(vol.initValue,0.0f)*Dt;
 
 	const int sPath=NUM_RNGS*NUM_SIMGROUPS;
-	data_t fCall=0,fPut=0;
+	data_t fCall=0.0f,fPut=0.0f;
 
 	data_t sCall[NUM_RNGS],sPut[NUM_RNGS];
 #pragma HLS ARRAY_PARTITION variable=sCall complete dim=1
@@ -129,8 +129,8 @@ void heston::sampleSIM(RNG* mt_rng, data_t* call,data_t* put, int num_sims)
 	for(int i =0;i<NUM_RNGS;i++)
 	{
 #pragma HLS UNROLL
-		sCall[i]=0;
-		sPut[i]=0;
+		sCall[i]=0.0f;
+		sPut[i]=0.0f;
 	}
 	loop_init:for(int s=0;s<NUM_SIMGROUPS;s++)
 	{
@@ -158,7 +158,7 @@ void heston::sampleSIM(RNG* mt_rng, data_t* call,data_t* put, int num_sims)
 					stockPrice[i][s]+=ratio3-pVols[i][s]*0.5f
 							+num1[i][s]*vol.correlation+num2[i][s]*ratio2;
 
-					pVols[i][s]=fmaxf(vols[i][s],0)*Dt;
+					pVols[i][s]=fmaxf(vols[i][s],0.0f)*Dt;
 				}
 			}
 
@@ -169,7 +169,7 @@ void heston::sampleSIM(RNG* mt_rng, data_t* call,data_t* put, int num_sims)
 			loop_sum_r:for(int i =0;i<NUM_RNGS;i++)
 			{
 	#pragma HLS UNROLL
-				if(stockPrice[i][s]>0)
+				if(stockPrice[i][s]>0.0f)
 				{
 					sCall[i]+=expf(stockPrice[i][s])-1.0f;
 				}
