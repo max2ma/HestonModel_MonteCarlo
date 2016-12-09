@@ -170,17 +170,17 @@ We can see that ![$\alpha$] is related to the latency of the inner loop. One of
 the main factors that limit it is the latency of generating a random number.
 
 ### Performance Comparison
-- Intel HD Graphics 4400 laptop GPU, with 80 cores, 1100MHz
-- GeForce GTX 960 with 1024 cores, 1178MHz
-- Quadro K4200 with 1344 cores, 784MHz
+- Intel HD Graphics 4400 laptop GPU, with 80 cores, 1100MHz, 15W
+- GeForce GTX 960 with 1024 cores, 1178MHz, 120W
+- Quadro K4200 with 1344 cores, 784MHz, 108W
 - Virtex 7 xc7vx690tffg1157-2, using the sin/cos functions, 160MHz
 - Virtex 7 xc7vx690tffg1157-2, using the sinf/cosf functions, 133MHz
 
 platform         |     t(ns)    | power(W)| energy/step(nJ)
 :--------------- | ------------:| -------:| --------:
 HD 4400          |     6.918    |  15     |  104    
-GTX 960          |     0.604    |  120    |  72     
-Quadro K4200     |     0.663    |  108    |  70     
+GTX 960          |     0.604    |  88    |  53.15     
+Quadro K4200     |     0.663    |  103    |  68.29     
 Virtex 7 sin/cos |     1.424    |  12     |  17     
 Virtex 7 sinf/cosf |     0.236    |  17.58     |  4.14     
 
