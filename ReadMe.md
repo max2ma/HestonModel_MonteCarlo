@@ -172,7 +172,7 @@ the main factors that limit it is the latency of generating a random number.
 ### Performance Comparison
 - Intel HD Graphics 4400 laptop GPU, with 80 cores, 1100MHz, 15W
 - GeForce GTX 960 with 1024 cores, 1178MHz, default power 120W, idle power 8W
-- Quadro K4200 with 1344 cores, 784MHz, default power 108W, idel power 13W
+- Quadro K4200 with 1344 cores, 784MHz, default power 108W, idle power 13W
 - Virtex 7 xc7vx690tffg1157-2, using the sin/cos functions, 160MHz
 - Virtex 7 xc7vx690tffg1157-2, using the sinf/cosf functions, 133MHz
 
