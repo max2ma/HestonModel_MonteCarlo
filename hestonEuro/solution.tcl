@@ -51,7 +51,7 @@ report_estimate
 compile_emulation -flow hardware -opencl_binary [get_opencl_binary heston]
 
 # Run the RTL simulation of the application
-run_emulation -flow hardware -args "-a heston.xclbin -n hestonEuro -p 5.9 -c 8.7 -s 2"
+run_emulation -flow hardware -args "-a heston.xclbin -n hestonEuro -p 5.9 -c 8.7"
 
 #Compile the application to run on an FPGA
 #build_system

@@ -73,7 +73,6 @@ namespace Params
 	double T = 1.0;
 	double upB=110;
 	double lowB=90;
-	int num_sims = 512;
 	char *kernel_name=NULL;     // -n
 	char *binary_name=NULL;     // -a
 }
@@ -84,7 +83,6 @@ void usage(char* name)
         <<" -n kernel_name"
         <<" [-c call_price]"
         <<" [-p put_price]"
-        <<" [-s num_sims]"
         <<endl;
 }
 int main(int argc, char** argv)
@@ -92,7 +90,7 @@ int main(int argc, char** argv)
 	int opt;
 	double callR=-1, putR=-1;
 	bool flaga=false,flagc=false,flagp=false,flagn=false;
-	while((opt=getopt(argc,argv,"n:a:c:p:s:"))!=-1){
+	while((opt=getopt(argc,argv,"n:a:c:p:"))!=-1){
 		switch(opt){
 			case 'n':
 				Params::kernel_name=optarg;
@@ -109,9 +107,6 @@ int main(int argc, char** argv)
 			case 'p':
 				putR=atof(optarg);
 				flagp=true;
-				break;
-			case 's':
-				Params::num_sims=atoi(optarg);
 				break;
 			default:
 				usage(argv[0]);
@@ -156,7 +151,7 @@ int main(int argc, char** argv)
 
 		cl::CommandQueue commandQueue(context, devices[0]);
 
-		typedef cl::make_kernel<cl::Buffer,cl::Buffer,float,float,float,float,float,float,float,float,float,float,float,int> kernelType;
+		typedef cl::make_kernel<cl::Buffer,cl::Buffer,float,float,float,float,float,float,float,float,float,float,float> kernelType;
 		kernelType kernelFunctor = kernelType(program, Params::kernel_name);
 
 		cl::Buffer d_call = cl::Buffer(context, CL_MEM_WRITE_ONLY, sizeof(float));
@@ -175,8 +170,7 @@ int main(int argc, char** argv)
 						Params::S0,
 						Params::K,
 						Params::upB,
-						Params::lowB,
-						Params::num_sims
+						Params::lowB
 						);
 
 		commandQueue.finish();

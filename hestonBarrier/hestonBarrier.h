@@ -43,10 +43,11 @@ class heston
 	static const int NUM_RNGS;
 	static const int NUM_SIMGROUPS;
 	static const int NUM_STEPS;
+	static const int NUM_SIMS;
 public:
 	heston(stockData,volData,barrierData);
-	void simulation(data_t*,data_t*,int);
-	void sampleSIM(RNG *,data_t*,data_t*,int);
+	void simulation(data_t*,data_t*);
+	void sampleSIM(RNG *,data_t*,data_t*);
 };
 
 #endif
